@@ -135,13 +135,13 @@ class ESCI_x_LCR1(PeriphRegister):
     def __init__(self):
         super().__init__()
         self.lres  = v_bits(1)
-        self.wu  = v_const(1)
-        self.wud  = v_bits(1)
+        self.wu  = v_bits(1)
+        self.wud  = v_bits(2)
         self._pad1  = v_const(2)
         self.prty  = v_bits(1)
         self.lin  = v_bits(1)
         self.rxie  = v_bits(1)
-        self.txir  = v_bits(1)
+        self.txie  = v_bits(1)
         self.wuie  = v_bits(1)
         self.stie  = v_bits(1)
         self.pbie  = v_bits(1)
@@ -201,7 +201,7 @@ class ESCI_REGISTERS(PeripheralRegisterSet):
         self.lcr1 = (ESCI_LCR1_OFFSET, ESCI_x_LCR1())
         self.lcr2 = (ESCI_LCR2_OFFSET, ESCI_x_LCR2()) 
         self.lrr = (ESCI_LRR_OFFSET, ESCI_x_LRR())  
-        self.lpt = (ESCI_LPR_OFFSET, ESCI_x_LPR())
+        self.lpr = (ESCI_LPR_OFFSET, ESCI_x_LPR())
 
 class eSCI(ExternalIOPeripheral):
     def __init__(self, devname, emu, mmio_addr):
