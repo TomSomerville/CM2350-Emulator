@@ -1,10 +1,9 @@
 from .helpers import MPC5674_Test
 
-
-ESPI_DEVICES = (
-    ('eSCI_A',0xFFFB0000),
-    ('eSCI_B',0xFFFB4000),
-    ('eSCI_C',0xFFFB8000)
+ESCI_DEVICES = (
+    ('eSCI_A', 0xFFFB0000),
+    ('eSCI_B', 0xFFFB4000),
+    ('eSCI_C', 0xFFFB8000)
 )
 
 #Registers Offests from Base Address
@@ -47,11 +46,12 @@ ESCI_LRR_DEFAULT = 0x00
 ESCI_LPR_DEFAULT_BYTES = b'\xc5\x99'
 ESCI_LPR_DEFAULT = 0xc599
 
+
 class MPC5674_ESCI(MPC5674_Test):
     
     def test_esci_brr(self):
-        for dev in range(len(ESPI_DEVICES)):
-            devname, baseaddr = ESPI_DEVICES[dev]
+        for dev in range(len(ESCI_DEVICES)):
+            devname, baseaddr = ESCI_DEVICES[dev]
             self.assertEqual(self.emu.sci[dev].devname, devname)
         
             addr = baseaddr + ESCI_BRR_OFFSET
@@ -61,12 +61,12 @@ class MPC5674_ESCI(MPC5674_Test):
 
             self.assertEqual(self.emu.sci[dev].registers.brr.sbr, 0x4)
 
-            self.emu.writeMemValue(addr, 0b1111_1111_1111_1111, 2)
-            self.assertEqual(self.emu.readMemValue(addr,2),0b0001_1111_1111_1111)
+            self.emu.writeMemValue(addr, 0xFFFF, 2)
+            self.assertEqual(self.emu.readMemValue(addr, 2), 0x1FFF)
 
     def test_esci_cr1(self):
-        for dev in range(len(ESPI_DEVICES)):
-            devname, baseaddr = ESPI_DEVICES[dev]
+        for dev in range(len(ESCI_DEVICES)):
+            devname, baseaddr = ESCI_DEVICES[dev]
             self.assertEqual(self.emu.sci[dev].devname, devname)
             
             addr = baseaddr + ESCI_CR1_OFFSET
@@ -89,12 +89,12 @@ class MPC5674_ESCI(MPC5674_Test):
             self.assertEqual(self.emu.sci[dev].registers.cr1.rwu, 0x0)
             self.assertEqual(self.emu.sci[dev].registers.cr1.sbk, 0x0)
 
-            self.emu.writeMemValue(addr, 0b1111_1111_1111_1111, 2)
-            self.assertEqual(self.emu.readMemValue(addr,2),0b1011_1111_1111_1111)
+            self.emu.writeMemValue(addr, 0xFFFF, 2)
+            self.assertEqual(self.emu.readMemValue(addr, 2), 0xBFFF)
 
     def test_esci_cr2(self):
-        for dev in range(len(ESPI_DEVICES)):
-            devname, baseaddr = ESPI_DEVICES[dev]
+        for dev in range(len(ESCI_DEVICES)):
+            devname, baseaddr = ESCI_DEVICES[dev]
             self.assertEqual(self.emu.sci[dev].devname, devname)
 
             addr = baseaddr + ESCI_CR2_OFFSET
@@ -118,12 +118,12 @@ class MPC5674_ESCI(MPC5674_Test):
             self.assertEqual(self.emu.sci[dev].registers.cr2.feie, 0x0)
             self.assertEqual(self.emu.sci[dev].registers.cr2.pfie, 0x0)
 
-            self.emu.writeMemValue(addr, 0b1111_1111_1111_1111, 2)
-            self.assertEqual(self.emu.readMemValue(addr,2),0b1111_1111_1111_1111)
+            self.emu.writeMemValue(addr, 0xFFFF, 2)
+            self.assertEqual(self.emu.readMemValue(addr, 2), 0xFFFF)
 
     def test_esci_cr3(self):
-        for dev in range(len(ESPI_DEVICES)):
-            devname, baseaddr = ESPI_DEVICES[dev]
+        for dev in range(len(ESCI_DEVICES)):
+            devname, baseaddr = ESCI_DEVICES[dev]
             self.assertEqual(self.emu.sci[dev].devname, devname)
 
             addr = baseaddr + ESCI_CR3_OFFSET
@@ -136,12 +136,12 @@ class MPC5674_ESCI(MPC5674_Test):
             self.assertEqual(self.emu.sci[dev].registers.cr3.erpe, 0x0)
             self.assertEqual(self.emu.sci[dev].registers.cr3.m2, 0x0)
 
-            self.emu.writeMemValue(addr, 0b1111_1111_1111_1111, 2)
-            self.assertEqual(self.emu.readMemValue(addr,2),0b0001_1111_0000_0000)
+            self.emu.writeMemValue(addr, 0xFFFF, 2)
+            self.assertEqual(self.emu.readMemValue(addr, 2), 0x1F00)
 
     def test_esci_ifsr1(self):
-        for dev in range(len(ESPI_DEVICES)):
-            devname, baseaddr = ESPI_DEVICES[dev]
+        for dev in range(len(ESCI_DEVICES)):
+            devname, baseaddr = ESCI_DEVICES[dev]
             self.assertEqual(self.emu.sci[dev].devname, devname)
 
             addr = baseaddr + ESCI_IFSR1_OFFSET
@@ -160,12 +160,28 @@ class MPC5674_ESCI(MPC5674_Test):
             self.assertEqual(self.emu.sci[dev].registers.ifsr1.tact, 0x0)
             self.assertEqual(self.emu.sci[dev].registers.ifsr1.ract, 0x0)
 
-            self.emu.writeMemValue(addr, 0b1111_1111_1111_1111, 2)
-            self.assertEqual(self.emu.readMemValue(addr,2),0b0000_0000_0000_0000)
+            self.emu.writeMemValue(addr, 0xFFFF, 2)
+            self.assertEqual(self.emu.readMemValue(addr, 2), 0x0000)
+            
+            self.emu.sci[dev].registers.ifsr1.vsOverrideValue('tdre', 0x1)
+            self.emu.sci[dev].registers.ifsr1.vsOverrideValue('tc', 0x1)
+            self.emu.sci[dev].registers.ifsr1.vsOverrideValue('rdrf', 0x1)
+            self.emu.sci[dev].registers.ifsr1.vsOverrideValue('idle', 0x1)
+            self.emu.sci[dev].registers.ifsr1.vsOverrideValue('orun', 0x1)
+            self.emu.sci[dev].registers.ifsr1.vsOverrideValue('nf', 0x1)
+            self.emu.sci[dev].registers.ifsr1.vsOverrideValue('fe', 0x1)
+            self.emu.sci[dev].registers.ifsr1.vsOverrideValue('pf', 0x1)
+            self.emu.sci[dev].registers.ifsr1.vsOverrideValue('berr', 0x1)
+            self.emu.sci[dev].registers.ifsr1.vsOverrideValue('tact', 0x1)
+            self.emu.sci[dev].registers.ifsr1.vsOverrideValue('ract', 0x1)
+            self.emu.writeMemValue(addr, 0x0000, 2)
+            self.assertEqual(self.emu.readMemValue(addr, 2), 0xFF13)
+            self.emu.writeMemValue(addr, 0xFFFF, 2)
+            self.assertEqual(self.emu.readMemValue(addr, 2), 0x0003)
 
     def test_esci_ifsr2(self):
-        for dev in range(len(ESPI_DEVICES)):
-            devname, baseaddr = ESPI_DEVICES[dev]
+        for dev in range(len(ESCI_DEVICES)):
+            devname, baseaddr = ESCI_DEVICES[dev]
             self.assertEqual(self.emu.sci[dev].devname, devname)
 
             addr = baseaddr + ESCI_IFSR2_OFFSET
@@ -183,12 +199,29 @@ class MPC5674_ESCI(MPC5674_Test):
             self.assertEqual(self.emu.sci[dev].registers.ifsr2.ureq, 0x0)
             self.assertEqual(self.emu.sci[dev].registers.ifsr2.ovfl, 0x0)
 
-            self.emu.writeMemValue(addr, 0b1111_1111_1111_1111, 2)
-            self.assertEqual(self.emu.readMemValue(addr,2),0b0000_0000_0000_0000)
+            self.emu.writeMemValue(addr, 0xFFFF, 2)
+            self.assertEqual(self.emu.readMemValue(addr, 2), 0x0000)
+
+            self.emu.sci[dev].registers.ifsr2.vsOverrideValue('rxrdy', 0x1)
+            self.emu.sci[dev].registers.ifsr2.vsOverrideValue('txrdy', 0x1)
+            self.emu.sci[dev].registers.ifsr2.vsOverrideValue('lwake', 0x1)
+            self.emu.sci[dev].registers.ifsr2.vsOverrideValue('sto', 0x1)
+            self.emu.sci[dev].registers.ifsr2.vsOverrideValue('pberr', 0x1)
+            self.emu.sci[dev].registers.ifsr2.vsOverrideValue('cerr', 0x1)
+            self.emu.sci[dev].registers.ifsr2.vsOverrideValue('ckerr', 0x1)
+            self.emu.sci[dev].registers.ifsr2.vsOverrideValue('frc', 0x1)
+            self.emu.sci[dev].registers.ifsr2.vsOverrideValue('ureq', 0x1)
+            self.emu.sci[dev].registers.ifsr2.vsOverrideValue('ovfl', 0x1)
+            self.emu.writeMemValue(addr, 0x0000, 2)
+            self.assertEqual(self.emu.readMemValue(addr, 2), 0xFF03)
+            self.emu.writeMemValue(addr, 0xFFFF, 2)
+            self.assertEqual(self.emu.readMemValue(addr, 2), 0x0000)
+
+
 
     def test_esci_lcr1(self):
-        for dev in range(len(ESPI_DEVICES)):
-            devname, baseaddr = ESPI_DEVICES[dev]
+        for dev in range(len(ESCI_DEVICES)):
+            devname, baseaddr = ESCI_DEVICES[dev]
             self.assertEqual(self.emu.sci[dev].devname, devname)
 
             addr = baseaddr + ESCI_LCR1_OFFSET
@@ -209,12 +242,12 @@ class MPC5674_ESCI(MPC5674_Test):
             self.assertEqual(self.emu.sci[dev].registers.lcr1.ckie, 0x0)
             self.assertEqual(self.emu.sci[dev].registers.lcr1.fcie, 0x0)
 
-            self.emu.writeMemValue(addr, 0b1111_1111_1111_1111, 2)
-            self.assertEqual(self.emu.readMemValue(addr,2),0b1111_0011_1111_1111)
+            self.emu.writeMemValue(addr, 0xFFFF, 2)
+            self.assertEqual(self.emu.readMemValue(addr, 2), 0xF3FF)
 
     def test_esci_lcr2(self):
-        for dev in range(len(ESPI_DEVICES)):
-            devname, baseaddr = ESPI_DEVICES[dev]
+        for dev in range(len(ESCI_DEVICES)):
+            devname, baseaddr = ESCI_DEVICES[dev]
             self.assertEqual(self.emu.sci[dev].devname, devname)
 
             addr = baseaddr + ESCI_LCR2_OFFSET
@@ -224,12 +257,12 @@ class MPC5674_ESCI(MPC5674_Test):
             self.assertEqual(self.emu.sci[dev].registers.lcr2.uqie, 0x0)
             self.assertEqual(self.emu.sci[dev].registers.lcr2.ofie, 0x0)
 
-            self.emu.writeMemValue(addr, 0b1111_1111_1111_1111, 2)
-            self.assertEqual(self.emu.readMemValue(addr,2),0b0000_0011_0000_0000)
+            self.emu.writeMemValue(addr, 0xFFFF, 2)
+            self.assertEqual(self.emu.readMemValue(addr, 2), 0x0300)
 
     def test_esci_lrr(self):
-        for dev in range(len(ESPI_DEVICES)):
-            devname, baseaddr = ESPI_DEVICES[dev]
+        for dev in range(len(ESCI_DEVICES)):
+            devname, baseaddr = ESCI_DEVICES[dev]
             self.assertEqual(self.emu.sci[dev].devname, devname)
 
             addr = baseaddr + ESCI_LRR_OFFSET
@@ -239,12 +272,12 @@ class MPC5674_ESCI(MPC5674_Test):
 
             self.assertEqual(self.emu.sci[dev].registers.lrr.d, 0x0)
             
-            self.emu.writeMemValue(addr, 0b1111_1111, 1)
-            self.assertEqual(self.emu.readMemValue(addr,1),0b0000_0000)
+            self.emu.writeMemValue(addr, 0xFF, 1)
+            self.assertEqual(self.emu.readMemValue(addr, 1), 0x00)
 
     def test_esci_lpr(self):
-        for dev in range(len(ESPI_DEVICES)):
-            devname, baseaddr = ESPI_DEVICES[dev]
+        for dev in range(len(ESCI_DEVICES)):
+            devname, baseaddr = ESCI_DEVICES[dev]
             self.assertEqual(self.emu.sci[dev].devname, devname)
 
             addr = baseaddr + ESCI_LPR_OFFSET
@@ -253,9 +286,8 @@ class MPC5674_ESCI(MPC5674_Test):
 
             self.assertEqual(self.emu.sci[dev].registers.lpr.p, 0xc599)
             
-            self.emu.writeMemValue(addr, 0b1111_1111_1111_1111, 2)
-            self.assertEqual(self.emu.readMemValue(addr,2),0b1111_1111_1111_1111)
-
+            self.emu.writeMemValue(addr, 0xFFFF, 2)
+            self.assertEqual(self.emu.readMemValue(addr, 2), 0xFFFF)
 
     def test_undefined_offsets(self):
         self.validate_invalid_read(0xFFFB001C, 4)
