@@ -96,41 +96,62 @@ class ESCI_x_DR(PeriphRegister):
         self.rdtd2  = v_bits(7)
 
 
-#this register has the horizontal split thing where verything is w1c on bottom
 class ESCI_x_IFSR1(PeriphRegister):
     def __init__(self):
         super().__init__()
-        self.tdre  = v_w1c(1)
-        self.tc  = v_w1c(1)
-        self.rdrf  = v_w1c(1)
-        self.idle  = v_w1c(1)
-        self.orun  = v_w1c(1)
-        self.nf  = v_w1c(1)
-        self.fe  = v_w1c(1)
+        #Renamed from tdre to tie for interrupt processing
+        self.tie  = v_w1c(1)
+        #renamed from tc to tcie for interrupt processing
+        self.tcie  = v_w1c(1)
+        #renamed from rdrf to rie for interrupt processing
+        self.rie  = v_w1c(1)
+        #renamed from idle to ilie (L) for interrupt processing
+        self.ilie  = v_w1c(1)
+        #renamed from orun to orie for interrupt processing
+        self.orie  = v_w1c(1)
+        #renamed from nf to nfie for interrupt processing
+        self.nfie  = v_w1c(1)
+        #renamed from fe to feie for interrupt processing
+        self.feie  = v_w1c(1)
+        #renamed from pf to pfie for interrupt processing
         self.pf  = v_w1c(1)
+        
         self._pad1  = v_const(3)
-        self.berr  = v_w1c(1)
+        #renamed from berr to bestp for interrupt processing
+        self.bestp  = v_w1c(1)
+        
         self._pad2  = v_const(2)
+        
         self.tact  = v_const(1)
+        
         self.ract  = v_const(1)
 
-#All of these have the horizontal split. needs more work.
 class ESCI_x_IFSR2(PeriphRegister):
     def __init__(self):
         super().__init__()
-        self.rxrdy  = v_w1c(1)
-        self.txrdy  = v_w1c(1)
-        self.lwake  = v_w1c(1)
-        self.sto  = v_w1c(1)
-        self.pberr  = v_w1c(1)
-        self.cerr  = v_w1c(1)
-        self.ckerr  = v_w1c(1)
-        self.frc  = v_w1c(1)
+        #Renamed from rxrdy to rxie for interrupt processing
+        self.rxie = v_w1c(1)
+        #renamed from txrdy to txie for interrupt processing
+        self.txie  = v_w1c(1)
+        #renamed from lwake to wuie for interrupt processing
+        self.wuie = v_w1c(1)
+        #renamed from sto to stie for interrupt processing
+        self.stie  = v_w1c(1)
+        #renamed from pberr to pbie for interrupt processing
+        self.pbie  = v_w1c(1)
+        #renamed from cerr to cie for interrupt processing
+        self.cie  = v_w1c(1)
+        #renamed from ckerr to ckie for interrupt processing
+        self.ckie  = v_w1c(1)
+        #renamed from frc to fcie for interrupt processing
+        self.fcie  = v_w1c(1)
+        
         self._pad1  = v_const(6)
-        self.ureq  = v_w1c(1)
-        self.ovfl  = v_w1c(1)
+        #renamed from ureq to uqie for interrupt processing
+        self.uqie  = v_w1c(1)
+        #renamed from ovfl to ofie for interrupt processing
+        self.ofie  = v_w1c(1)
 
-#this one has the horizontal split for the wu register. needs more work
 class ESCI_x_LCR1(PeriphRegister):
     def __init__(self):
         super().__init__()
@@ -192,6 +213,7 @@ class ESCI_REGISTERS(PeripheralRegisterSet):
     def __init__(self):
         super().__init__()
 
+
         self.brr = (ESCI_BRR_OFFSET, ESCI_x_BRR())
         self.cr1 = (ESCI_CR1_OFFSET, ESCI_x_CR1())
         self.cr2 = (ESCI_CR2_OFFSET, ESCI_x_CR2()) 
@@ -203,7 +225,95 @@ class ESCI_REGISTERS(PeripheralRegisterSet):
         self.lrr = (ESCI_LRR_OFFSET, ESCI_x_LRR())  
         self.lpr = (ESCI_LPR_OFFSET, ESCI_x_LPR())
 
+ESCI_INT_EVENTS = {
+        'ESCI_A': {
+            'tie':      INTC_EVENT.ESCIA_IFSR1_TDRE,        
+            'tcie':     INTC_EVENT.ESCIA_IFSR1_TC,          
+            'rie':      INTC_EVENT.ESCIA_IFSR1_RDRF,        
+            'ilie':     INTC_EVENT.ESCIA_IFSR1_IDLE,
+            'orie':     INTC_EVENT.ESCIA_IFSR1_OR,          
+            'nfie':     INTC_EVENT.ESCIA_IFSR1_NF,          
+            'feie':     INTC_EVENT.ESCIA_IFSR1_FE,          
+            'pfie':     INTC_EVENT.ESCIA_IFSR1_PF,          
+            'bestp':    INTC_EVENT.ESCIA_IFSR1_BERR,        
+            #'rxie':     INTC_EVENT.ESCIA_IFSR2_RXRDY,       
+            #'txie':     INTC_EVENT.ESCIA_IFSR2_TXRDY,       
+            #'wuie':     INTC_EVENT.ESCIA_IFSR2_LWAKE,       
+            #'stie':     INTC_EVENT.ESCIA_IFSR2_STO,         
+            #'pbie':     INTC_EVENT.ESCIA_IFSR2_PBERR,       
+            #'cie':      INTC_EVENT.ESCIA_IFSR2_CERR,        
+            #'ckie':     INTC_EVENT.ESCIA_IFSR2_CKERR,       
+            #'fcie':     INTC_EVENT.ESCIA_IFSR2_FRC,         
+            #'ofie':     INTC_EVENT.ESCIA_IFSR2_OVFL,        
+            #'uqie':     INTC_EVENT.ESCIA_IFSR2_UREQ        
+        },
+        'ESCI_B': {
+            'tie':      INTC_EVENT.ESCIB_IFSR1_TDRE,
+            'tcie':     INTC_EVENT.ESCIB_IFSR1_TC,
+            'rie':      INTC_EVENT.ESCIB_IFSR1_RDRF,
+            'ilie':     INTC_EVENT.ESCIB_IFSR1_IDLE,
+            'orie':     INTC_EVENT.ESCIB_IFSR1_OR,    
+            'nfie':     INTC_EVENT.ESCIB_IFSR1_NF,    
+            'feie':     INTC_EVENT.ESCIB_IFSR1_FE,    
+            'pfie':     INTC_EVENT.ESCIB_IFSR1_PF,    
+            'bestp':    INTC_EVENT.ESCIB_IFSR1_BERR,    
+            #'rxie':     INTC_EVENT.ESCIB_IFSR2_RXRDY,    
+            #'txie':     INTC_EVENT.ESCIB_IFSR2_TXRDY,    
+            #'wuie':     INTC_EVENT.ESCIB_IFSR2_LWAKE,    
+            #'stie':     INTC_EVENT.ESCIB_IFSR2_STO,    
+            #'pbie':     INTC_EVENT.ESCIB_IFSR2_PBERR,    
+            #'cie':      INTC_EVENT.ESCIB_IFSR2_CERR,    
+            #'ckie':     INTC_EVENT.ESCIB_IFSR2_CKERR,    
+            #'fcie':     INTC_EVENT.ESCIB_IFSR2_FRC,    
+            #'ofie':     INTC_EVENT.ESCIB_IFSR2_OVFL,    
+            #'uqie':     INTC_EVENT.ESCIB_IFSR2_UREQ
+        },
+        'ESCI_C': {
+            'tie':      INTC_EVENT.ESCIC_IFSR1_TDRE,
+            'tcie':     INTC_EVENT.ESCIC_IFSR1_TC,
+            'rie':      INTC_EVENT.ESCIC_IFSR1_RDRF,
+            'ilie':     INTC_EVENT.ESCIC_IFSR1_IDLE,
+            'orie':     INTC_EVENT.ESCIC_IFSR1_OR,    
+            'nfie':     INTC_EVENT.ESCIC_IFSR1_NF,    
+            'feie':     INTC_EVENT.ESCIC_IFSR1_FE,    
+            'pfie':     INTC_EVENT.ESCIC_IFSR1_PF,    
+            'bestp':    INTC_EVENT.ESCIC_IFSR1_BERR,    
+            #'rxie':     INTC_EVENT.ESCIC_IFSR2_RXRDY,    
+            #'txie':     INTC_EVENT.ESCIC_IFSR2_TXRDY,    
+            #'wuie':     INTC_EVENT.ESCIC_IFSR2_LWAKE,    
+            #'stie':     INTC_EVENT.ESCIC_IFSR2_STO,    
+            #'pbie':     INTC_EVENT.ESCIC_IFSR2_PBERR,    
+            #'cie':      INTC_EVENT.ESCIC_IFSR2_CERR,    
+            #'ckie':     INTC_EVENT.ESCIC_IFSR2_CKERR,    
+            #'fcie':     INTC_EVENT.ESCIC_IFSR2_FRC,    
+            #'ofie':     INTC_EVENT.ESCIC_IFSR2_OVFL,    
+            #'uqie':     INTC_EVENT.ESCIC_IFSR2_UREQ
+        }
+}
+
+
 class eSCI(ExternalIOPeripheral):
     def __init__(self, devname, emu, mmio_addr):
-        super().__init__(emu, devname, mmio_addr, 0x4000, regsetcls=ESCI_REGISTERS)
+        super().__init__(emu, devname, mmio_addr, 0x4000, regsetcls=ESCI_REGISTERS, 
+                #isrstatus=('ifsr1','ifsr2'), isrflags=('cr1','cr2'), isrevents=ESCI_INT_EVENTS)
+                isrstatus='ifsr1', isrflags='cr1', isrevents=ESCI_INT_EVENTS)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

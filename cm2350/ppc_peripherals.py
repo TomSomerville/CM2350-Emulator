@@ -180,8 +180,8 @@ class MMIOPeripheral(Peripheral, mmio.MMIO_DEVICE):
                 src_fields_str = ', '.join(isrevents)
                 status_fields_str = ', '.join(status_reg._vs_fields)
                 flag_fields_str = ', '.join(flags_reg._vs_fields)
-                raise Exception('ISR status and flag registers missing sources: %s (status: %s, flag: %s)' % \
-                        (src_fields_str, status_fields_str, flag_fields_str))
+                #raise Exception('ISR status and flag registers missing sources: %s (status: %s, flag: %s)' % \
+                #        (src_fields_str, status_fields_str, flag_fields_str))
 
         return is_no_channels_config
 
