@@ -16,22 +16,45 @@ logger = logging.getLogger(__name__)
 #]
 
 ESCI_BRR_OFFSET     = 0x0000
+ESCI_BRR_SIZE       = 2
+ESCI_BRR_RANGE      = range(ESCI_BRR_OFFSET, ESCI_BRR_OFFSET + ESCI_BRR_SIZE)
+ESCI_CR1_OFFSET     = 0x0002
+ESCI_CR1_SIZE       = 2
+ESCI_CR1_RANGE      = range(ESCI_CR1_OFFSET, ESCI_CR1_OFFSET + ESCI_CR1_SIZE)
+ESCI_CR2_OFFSET     = 0x0004
+ESCI_CR2_SIZE       = 2
+ESCI_CR2_RANGE      = range(ESCI_CR2_OFFSET, ESCI_CR2_OFFSET + ESCI_CR2_SIZE)
+ESCI_CR3_OFFSET     = 0x001A
+ESCI_CR3_SIZE       = 2
+ESCI_CR3_RANGE      = range(ESCI_CR3_OFFSET, ESCI_CR3_OFFSET + ESCI_CR3_SIZE)
 
-ESCI_CR1_OFFSET    = 0x0002
-ESCI_CR2_OFFSET    = 0x0004
-ESCI_CR3_OFFSET    = 0x001A
+ESCI_DR_OFFSET      = 0x0006
+ESCI_DR_SIZE        = 2
+ESCI_DR_RANGE       = range(ESCI_DR_OFFSET, ESCI_DR_OFFSET + ESCI_DR_SIZE)
 
-ESCI_DR_OFFSET    = 0x0006
-
-ESCI_IFSR1_OFFSET    = 0x0008
-ESCI_IFSR2_OFFSET    = 0x000A
+ESCI_IFSR1_OFFSET   = 0x0008
+ESCI_IFSR1_SIZE     = 2
+ESCI_IFSR1_RANGE    = range(ESCI_IFSR1_OFFSET, ESCI_IFSR1_OFFSET + ESCI_IFSR1_SIZE)
+ESCI_IFSR2_OFFSET   = 0x000A
+ESCI_IFSR2_SIZE     = 2
+ESCI_IFSR2_RANGE    = range(ESCI_IFSR2_OFFSET, ESCI_IFSR2_OFFSET + ESCI_IFSR2_SIZE)
 
 ESCI_LCR1_OFFSET    = 0x000C
+ESCI_LCR1_SIZE      = 2
+ESCI_LCR1_RANGE     = range(ESCI_LCR1_OFFSET, ESCI_LCR1_OFFSET + ESCI_LCR1_SIZE)
 ESCI_LCR2_OFFSET    = 0x000E
+ESCI_LCR2_SIZE      = 2
+ESCI_LCR2_RANGE     = range(ESCI_LCR2_OFFSET, ESCI_LCR2_OFFSET + ESCI_LCR2_SIZE)
 
-ESCI_LTR_OFFSET    = 0x0010
-ESCI_LRR_OFFSET    = 0x0014
-ESCI_LPR_OFFSET    = 0x0018
+ESCI_LTR_OFFSET     = 0x0010
+ESCI_LTR_SIZE       = 1
+ESCI_LTR_RANGE      = range(ESCI_LTR_OFFSET, ESCI_LTR_OFFSET + ESCI_LTR_SIZE)
+ESCI_LRR_OFFSET     = 0x0014
+ESCI_LRR_SIZE       = 1
+ESCI_LRR_RANGE      = range(ESCI_LRR_OFFSET, ESCI_LRR_OFFSET + ESCI_LRR_SIZE)
+ESCI_LPR_OFFSET     = 0x0018
+ESCI_LPR_SIZE       = 2
+ESCI_LPR_RANGE      = range(ESCI_LPR_OFFSET, ESCI_LPR_OFFSET + ESCI_LPR_SIZE)
 
 
 #No Fancy Dancy Needed
@@ -46,75 +69,91 @@ class ESCI_x_BRR(PeriphRegister):
 class ESCI_x_CR1(PeriphRegister):
     def __init__(self):
         super().__init__()
-        #This bit along with RSCR need special handling.
+        #Special Handling Completed Via vsAddParseCallback in __init__
         self.loops = v_bits(1)
         self._pad1 = v_const(1)
-        #This bit along with loops need special handling.
+        #Special Handling Completed Via vsAddParseCallback in __init__
         self.rsrc = v_bits(1)
-        #This sets start and stop bits for frames. I dont believe this is needed since we wont
+        #No Special Handling Needed
         self.m = v_bits(1)
-        #I believe ther will be no sleep, so no wake needeD?
+        #No SpecialHandling Needed
         self.wake = v_bits(1)
-        #Needs special handling - only to throw exception that sleep / wake is not a supported feature.
+        #Special Handling Completed Via vsAddParseCallback in __init__
         self.ilt = v_bits(1)
-        #no frames so no parity biuts needed?
+        #No SpecialHandling Needed
         self.pe = v_bits(1)
-        #again, no frames no parity?
+        #No SpecialHandling Needed
         self.pt = v_bits(1)
-        #Interrupt not needed per erin
+        #No SpecialHandling Needed
         self.tie = v_bits(1)
-        #Interrupt not needed per erin
+        #No SpecialHandling Needed
         self.tcie = v_bits(1)
-        #Interrup not needed per erin
+        #No SpecialHandling Needed
         self.rie = v_bits(1)
-        #Interrupt not needed per erin
+        #No SpecialHandling Needed
         self.ilie = v_bits(1)
-        #Interrupt not needed per erin
+        #No SpecialHandling Needed
         self.te = v_bits(1)
-        #Special handling Needed to determine  if enabled then process message, if disabled, ignore it.
+        #Special Handling Completed Via vsAddParseCallback in __init__
         self.re = v_bits(1)
-        #no wakeup mode will be in place, not needed?
+        #No SpecialHandling Needed
         self.rwu = v_bits(1)
-        #This sends determines if a break character is set. I dont believe we will need to have a break charcater ever to denote end of stream and return to ready state mode?
+        #Special Handling Completed Via vsAddParseCallback in __init__
+        self.re = v_bits(1)
+        #Special Handling Completed Via vsAddParseCallback in __init__
         self.sbk = v_bits(1)
 
 #Haoppy with how this one looks.
 class ESCI_x_CR2(PeriphRegister):
     def __init__(self):
         super().__init__()
-        #Needs special handling, if enabled, process message, if disabled ignore.
+        #Special Handling Completed Via vsAddParseCallback in __init__
         self.mdis = v_bits(1)
-        #This is transmission error detection. This looks like layer 2 err checking and thus not needeD?
+
+        #No SpecialHandling Needed
         self.fbr = v_bits(1)
-        #Review with Erin, I didnt get DMA
+
+        #No SpecialHandling Needed
         self.bstp = v_bits(1, 0b1)
-        #This bit controls the BERR interrupt request generation, but is not hte interrupt itself. Review with Erin, how to handle this?
+        
+        #No SpecialHandling Needed
         self.berrie = v_bits(1)
-        #Probably needs special handling
+        
+        #Ignore for now - Will need special Sauce Probably needs special handling
         self.rxdma = v_bits(1)
-        #Probvably needs special handling
+        
+        #Ignore for now - Will need special Sauce Probvably needs special handling
         self.txdma = v_bits(1)
-        #Break Character length, I dont believe we need break characters?
+        
+        #No SpecialHandling Needed
         self.brcl = v_bits(1)
-        #This enabled / disabled the TXD pin. layer 1 stuff not needed?
+        
+        #No SpecialHandling Needed
         self.txdir = v_bits(1)
-        #This is fast bit err detection. Sounds like layer 2 stuff not needed?
+        
+        #No SpecialHandling Needed
         self.besm = v_bits(1)
-        #Interrupt not needed per erin
+        
+        #No SpecialHandling Needed
         self.bestp = v_bits(1)
-        #Pin Polarity?! have Erinr eview with me, but I dont believe it is needed
+        
+        #No SpecialHandling Needed
         self.rxpol = v_bits(1)
-        #Parity bit masking. parity bits not used/ therefore this not needed
+        
+        #Special Handling Completed Via vsAddParseCallback in __init__
         self.pmsk = v_bits(1)
+        
         #Interrupt not needed per erin
         self.orie = v_bits(1)
+        
         #Interrupt not needed per erin
         self.nfie = v_bits(1)
+        
         #Interrupt not needed per erin
         self.feie = v_bits(1)
+        
         #Interrupt not needed per erin
         self.pfie = v_bits(1)
-        #Interrupt not needed per erin
 
 #This register has the horizontal split fgor RD/TD. needs more work
 class ESCI_x_DR(PeriphRegister):
@@ -148,16 +187,16 @@ class ESCI_x_IFSR1(PeriphRegister):
         #renamed from fe to feie for interrupt processing
         self.feie  = v_w1c(1)
         #renamed from pf to pfie for interrupt processing
-        self.pf  = v_w1c(1)
+        self.pfie  = v_w1c(1)
         #pad remains pad
         self._pad1  = v_const(3)
         #renamed from berr to bestp for interrupt processing
         self.bestp  = v_w1c(1)
         #pad remains pad
         self._pad2  = v_const(2)
-        #Transmitter active, status bit is set as long as transmmittion of frame is active. Likely dont need special handling.
+        #No SpecialHandling Needed
         self.tact  = v_const(1)
-        #Receiver active, bit set during reception of data. likely wont need special handling?
+        #No SpecialHandling Needed
         self.ract  = v_const(1)
 
 class ESCI_x_IFSR2(PeriphRegister):
@@ -189,33 +228,46 @@ class ESCI_x_IFSR2(PeriphRegister):
 class ESCI_x_LCR1(PeriphRegister):
     def __init__(self):
         super().__init__()
-        #Will require special handling. Lin enginer in operation / idle
+        #Special Handling Completed Via vsAddParseCallback in __init__
         self.lres  = v_bits(1)
-        #LIN wake up trigger, not needed as no wake up
+        
+        #No SpecialHandling Needed
         self.wu  = v_bits(1)
-        #LIN wake up delimiter time, not needeed no wake up
+        
+        #No SpecialHandling Needed
         self.wud  = v_bits(2)
+        
         #pad remains pad
         self._pad1  = v_const(2)
-        #controls 2x parity bits in LIN header, not neede since no headers
+        
+        #No SpecialHandling Needed
         self.prty  = v_bits(1)
-        #needs special handling. 0 = sci mode, 1 = LIN mode
+        
+        #Special Handling Completed Via vsAddParseCallback in __init__
         self.lin  = v_bits(1)
-        #this looks a LOT like a normal interrupt. Run apst erin why it is not in the interrupt table
+        
+        #Interrupt not needed per erin
         self.rxie  = v_bits(1)
-        #This looks a lot lieka normal interrupt, ask erin why not in interrupt table
+        
+        #Interrupt not needed per erin
         self.txie  = v_bits(1)
-        #Wakeup interrupt bit, no wake up, not needed
+        
+        #No SpecialHandling Needed
         self.wuie  = v_bits(1)
-        #ask erin why this is not in interrupt table
+        
+        #Interrupt not needed per erin
         self.stie  = v_bits(1)
-        #ask erin why this is not in interrupt table
+        
+        #Interrupt not needed per erin
         self.pbie  = v_bits(1)
-        ##ask erin why this is not in interrupt table
+        
+        #Interrupt not needed per erin
         self.cie  = v_bits(1)
-        ##ask erin why this is not in interrupt table
+        
+        #Interrupt not needed per erin
         self.ckie  = v_bits(1)
-        #ask erin why this is not in interrupt table
+        
+        #Interrupt not needed per erin
         self.fcie  = v_bits(1)
 
 #Happy with how this one looks
@@ -234,7 +286,7 @@ class ESCI_x_LCR2(PeriphRegister):
 class ESCI_x_LTR(PeriphRegister):
     def __init__(self):
         super().__init__()
-        #whole register will require special handling
+        #whole register will require special handling. Raise exception if CRC Enable bit is set.
         self.filler = v_bits(8)
 
 #Happy with hose this looks?
@@ -257,11 +309,11 @@ class ESCI_x_CR3(PeriphRegister):
         self._pad1 = v_const(3)
         #Syncronization sequence not needed?
         self.synm = v_bits(1)
-        #noty sure about overruns
+        #not needed
         self.eroe = v_bits(1)
         #not sure
         self.erfe = v_bits(1)
-        #Probably not needed, double check
+        #not needed
         self.erpe = v_bits(1)
         #will require special handling
         self.m2 = v_bits(1)
@@ -293,7 +345,7 @@ ESCI_INT_EVENTS = {
             'nfie':     INTC_EVENT.ESCIA_IFSR1_NF,          
             'feie':     INTC_EVENT.ESCIA_IFSR1_FE,          
             'pfie':     INTC_EVENT.ESCIA_IFSR1_PF,          
-            'bestp':    INTC_EVENT.ESCIA_IFSR1_BERR,        
+            'berrie':    INTC_EVENT.ESCIA_IFSR1_BERR,        
             #'rxie':     INTC_EVENT.ESCIA_IFSR2_RXRDY,       
             #'txie':     INTC_EVENT.ESCIA_IFSR2_TXRDY,       
             #'wuie':     INTC_EVENT.ESCIA_IFSR2_LWAKE,       
@@ -314,7 +366,7 @@ ESCI_INT_EVENTS = {
             'nfie':     INTC_EVENT.ESCIB_IFSR1_NF,    
             'feie':     INTC_EVENT.ESCIB_IFSR1_FE,    
             'pfie':     INTC_EVENT.ESCIB_IFSR1_PF,    
-            'bestp':    INTC_EVENT.ESCIB_IFSR1_BERR,    
+            'berrie':    INTC_EVENT.ESCIB_IFSR1_BERR,    
             #'rxie':     INTC_EVENT.ESCIB_IFSR2_RXRDY,    
             #'txie':     INTC_EVENT.ESCIB_IFSR2_TXRDY,    
             #'wuie':     INTC_EVENT.ESCIB_IFSR2_LWAKE,    
@@ -335,7 +387,7 @@ ESCI_INT_EVENTS = {
             'nfie':     INTC_EVENT.ESCIC_IFSR1_NF,    
             'feie':     INTC_EVENT.ESCIC_IFSR1_FE,    
             'pfie':     INTC_EVENT.ESCIC_IFSR1_PF,    
-            'bestp':    INTC_EVENT.ESCIC_IFSR1_BERR,    
+            'berrie':    INTC_EVENT.ESCIC_IFSR1_BERR,    
             #'rxie':     INTC_EVENT.ESCIC_IFSR2_RXRDY,    
             #'txie':     INTC_EVENT.ESCIC_IFSR2_TXRDY,    
             #'wuie':     INTC_EVENT.ESCIC_IFSR2_LWAKE,    
@@ -350,13 +402,125 @@ ESCI_INT_EVENTS = {
 }
 
 
+class RECEIVER_SOURCE_MODE(enum.IntEnum):
+
+    DUALWIRE    = 0
+    LOOP        = 2
+    SINGLEWIRE  = 3
+
+class RECEIVER_STATE(enum.IntEnum):
+
+    DISABLED    = 0
+    ENABLED     = 1
+
+class MODULE_MODE_OF_OPERATION(enum.IntEnum):
+
+    DISABLED    = 0
+    ENABLED     = 1
+
+class PARITY_BIT_MASKING(enum.IntEnum):
+
+    DISABLED    = 0
+    ENABLED     = 1
+
+class LIN_PROTOCOL_ENGINE_RESET(enum.IntEnum):
+
+    OPERATIONAL = 0
+    IDLE        = 1
+
+class LIN_SCI_MODE(enum.IntEnum):
+
+    SCI         = 0
+    LIN         = 1
+
 class eSCI(ExternalIOPeripheral):
     def __init__(self, devname, emu, mmio_addr):
         super().__init__(emu, devname, mmio_addr, 0x4000, regsetcls=ESCI_REGISTERS, 
                 #isrstatus=('ifsr1','ifsr2'), isrflags=('cr1','cr2'), isrevents=ESCI_INT_EVENTS)
                 isrstatus='ifsr1', isrflags='cr1', isrevents=ESCI_INT_EVENTS)
 
+        self.registers.cr1.vsAddParseCallback('loops', self.setReceiverSourceMode)
+        self.registers.cr1.vsAddParseCallback('rscr', self.setReceiverSourceMode)
+        self.registers.cr1.vsAddParseCallback('ilt', self.wakeNotSupported)
+        self.registers.cr1.vsAddParseCallback('re', self.setReceiverEnabled)
+        self.registers.cr1.vsAddParseCallback('sbk', self.breakCharacterNotSupported)
+        self.registers.cr2.vsAddParseCallback('mdis', self.moduleModeOfOperation)
+        self.registers.cr2.vsAddParseCallback('pmsk', self.parityBitMasking)
+        self.registers.cr2.vsAddParseCallback('lres', self.linProtocolEngineReset)
+        self.registers.cr2.vsAddParseCallback('lin', self.linModeControl)
 
+    def linModeControl(self, thing)
+        if self.registers.cr2.lin = 0:
+            self.mode = LIN_SCI_MODE.SCI
+        if self.registers.cr2.lin = 1:
+            self.mode = LIN_SCI_MODE.LIN
+
+    def linProtocolEngineReset(self, thing)
+        if self.registers.cr2.lres = 0:
+            self.linProtoEnginer = LIN_PROTOCOL_ENGINE_RESET.OPERATIONAL
+        elif self.registers.cr2.lres = 1:
+            self.linProtoEnginer = LIN_PROTOCOL_ENGINE_RESET.IDLE
+
+    def parityBitMasking(self, thing):
+        if self.registers.cr2.pmsk = 0:
+            self.parityBitMask = PARITY_BIT_MASKING.DISABLE
+        elif self.registers.cr2.pmsk = 1:
+            self.parityBitMask = PARITY_BIT_MASKING.ENABLE
+
+    def moduleModeOfOperation(self, thing):
+        if self.registers.cr2.mdis = 0:
+            self.moduleModeOfOperation = MODULE_MODE_OF_OPERATION.DISABLE
+        elif self.registers.cr2.mdis = 1:
+            self.moduleModeOfOperation = MODULE_MODE_OF_OPERATION.ENABLE
+
+    def breakCharacterNotSupported(self, thing):
+        raise NotImplementedError("Setting/Sending of break characters not implimented yet.")
+
+    def setReceiverEnabled(self, thing):
+        if self.registers.cr1.re = 0:
+            self.receiverEnable = RECEIVER_STATE.DISABLED
+        elif self.registers.cr1.re = 1:
+            self.receiverEnable = RECEIVER_STATE.ENABLED
+
+    def wakeNotSupported(self, thing):
+        #no idea what thing is, but appears as an arg in all parsecallbacks
+        raise NotImplementedError("Idle/Sleep/Wake Not yet Supported")
+
+    def setReceiverSourceMode(self, thing):
+        #no idea what thing is, but appears as an arg in all parsecallbacks
+        if self.registers.cr1.loops == 1 and self.registers.cr1.rscr == 1:
+            self.receiverSourceMode = RECEIVER_SOURCE_MODE.SINGLEWIRE
+        elif self.registers.cr1.loops == 1 and self.registers.cr1.rscr == 0:
+            self.receiverSourceMode = RECEIVER_SOURCE_MODE.LOOP
+        elif self.registers.cr1.loops == 0 and self.registers.cr1.rscr == 0:
+            self.receiverSourceMode = RECEIVER_SOURCE_MODE.DUALWIRE
+            
+    def reset(self, emu):
+        super().reset(emu)
+        self.brrShadowReg = 0
+        self.receiverEnable = 0
+        self.receiverSourceMode = 0
+        self.moduleModeOfOperation = 0
+        self.parityBitMask = 0
+        self.linProtoEngine = 0
+        self.mode = 0
+
+    def _setPeriphReg(self, offset, bytez):
+        
+        if offset in ESCI_BRR_RANGE:
+            if len(bytez) == 2:
+                self.registers.brr.sbr = e_bits.parsebytes(bytez, 0, 2, bigend=self.emu.getEndian()) 
+                self.brrShadowReg = 0
+            elif offset == ESCI_BRR_OFFSET:
+                self.brrShadowReg = bytez[0]
+            elif offset == ESCI_BRR_OFFSET + 1:
+                self.registers.brr.sbr = (self.brrShadowReg << 8) | bytez[0]
+                self.brrShadowReg = 0
+        
+        #elif offsett in ESCI_REG2_RANGE:
+        #   pass
+        else:
+            super()._setPeriphReg(offset, bytez)
 
 
 
