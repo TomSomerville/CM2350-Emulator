@@ -274,11 +274,15 @@ class ESCI_x_LCR1(PeriphRegister):
 class ESCI_x_LCR2(PeriphRegister):
     def __init__(self):
         super().__init__()
+        #pad remains pad
         self._pad1 = v_const(6)
-        #ask erin why this is not in interrupt table
+        
+        #Interrupt not needed per erin
         self.uqie = v_bits(1)
-        #ask erin why this is not in interrupt table
+        
+        #Interrupt not needed per erin
         self.ofie  = v_bits(1)
+        
         #pad remains pad
         self._pad2  = v_const(8)
 
@@ -296,27 +300,33 @@ class ESCI_x_LRR(PeriphRegister):
         #whole register will require special handling
         self.d   = v_const(8)
 
-#happy with how this looks.
 class ESCI_x_LPR(PeriphRegister):
     def __init__(self):
         super().__init__()
-        #no descrion or details on this?
+        #No SpecialHandling Needed
         self.p  = v_bits(16, 0b1100010110011001)
 
 class ESCI_x_CR3(PeriphRegister):
     def __init__(self):
         super().__init__()
+        #pad remains pad
         self._pad1 = v_const(3)
-        #Syncronization sequence not needed?
+        
+        #No SpecialHandling Needed
         self.synm = v_bits(1)
-        #not needed
+        
+        #No SpecialHandling Needed
         self.eroe = v_bits(1)
-        #not sure
+        
+        #No SpecialHandling Needed
         self.erfe = v_bits(1)
-        #not needed
+        
+        #No SpecialHandling Needed
         self.erpe = v_bits(1)
+        
         #will require special handling
         self.m2 = v_bits(1)
+        
         #pad remains pad
         self._pad2 = v_const(8)
 
