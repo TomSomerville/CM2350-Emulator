@@ -62,7 +62,7 @@ class ESCI_x_BRR(PeriphRegister):
     def __init__(self):
         super().__init__()
         self._pad1 = v_const(3, 0b000)
-        #Needs special handling for the isntance of lower byte written two without preceding byte, if upper byte has a non zero value. 
+        #Needs special handling for the isntance of lower byte written two without preceding byte, if upper byte has a non zero value.
         self.sbr = v_bits(13, 0b0000000000100)
 
 
@@ -115,43 +115,43 @@ class ESCI_x_CR2(PeriphRegister):
 
         #No SpecialHandling Needed
         self.bstp = v_bits(1, 0b1)
-        
+
         #No SpecialHandling Needed
         self.berrie = v_bits(1)
-        
+
         #Ignore for now - Will need special Sauce Probably needs special handling
         self.rxdma = v_bits(1)
-        
+
         #Ignore for now - Will need special Sauce Probvably needs special handling
         self.txdma = v_bits(1)
-        
+
         #No SpecialHandling Needed
         self.brcl = v_bits(1)
-        
+
         #No SpecialHandling Needed
         self.txdir = v_bits(1)
-        
+
         #No SpecialHandling Needed
         self.besm = v_bits(1)
-        
+
         #No SpecialHandling Needed
         self.bestp = v_bits(1)
-        
+
         #No SpecialHandling Needed
         self.rxpol = v_bits(1)
-        
+
         #Special Handling Completed Via vsAddParseCallback in __init__
         self.pmsk = v_bits(1)
-        
+
         #Interrupt not needed per erin
         self.orie = v_bits(1)
-        
+
         #Interrupt not needed per erin
         self.nfie = v_bits(1)
-        
+
         #Interrupt not needed per erin
         self.feie = v_bits(1)
-        
+
         #Interrupt not needed per erin
         self.pfie = v_bits(1)
 
@@ -230,43 +230,43 @@ class ESCI_x_LCR1(PeriphRegister):
         super().__init__()
         #Special Handling Completed Via vsAddParseCallback in __init__
         self.lres  = v_bits(1)
-        
+
         #No SpecialHandling Needed
         self.wu  = v_bits(1)
-        
+
         #No SpecialHandling Needed
         self.wud  = v_bits(2)
-        
+
         #pad remains pad
         self._pad1  = v_const(2)
-        
+
         #No SpecialHandling Needed
         self.prty  = v_bits(1)
-        
+
         #Special Handling Completed Via vsAddParseCallback in __init__
         self.lin  = v_bits(1)
-        
+
         #Interrupt not needed per erin
         self.rxie  = v_bits(1)
-        
+
         #Interrupt not needed per erin
         self.txie  = v_bits(1)
-        
+
         #No SpecialHandling Needed
         self.wuie  = v_bits(1)
-        
+
         #Interrupt not needed per erin
         self.stie  = v_bits(1)
-        
+
         #Interrupt not needed per erin
         self.pbie  = v_bits(1)
-        
+
         #Interrupt not needed per erin
         self.cie  = v_bits(1)
-        
+
         #Interrupt not needed per erin
         self.ckie  = v_bits(1)
-        
+
         #Interrupt not needed per erin
         self.fcie  = v_bits(1)
 
@@ -276,13 +276,13 @@ class ESCI_x_LCR2(PeriphRegister):
         super().__init__()
         #pad remains pad
         self._pad1 = v_const(6)
-        
+
         #Interrupt not needed per erin
         self.uqie = v_bits(1)
-        
+
         #Interrupt not needed per erin
         self.ofie  = v_bits(1)
-        
+
         #pad remains pad
         self._pad2  = v_const(8)
 
@@ -311,22 +311,22 @@ class ESCI_x_CR3(PeriphRegister):
         super().__init__()
         #pad remains pad
         self._pad1 = v_const(3)
-        
+
         #No SpecialHandling Needed
         self.synm = v_bits(1)
-        
+
         #No SpecialHandling Needed
         self.eroe = v_bits(1)
-        
+
         #No SpecialHandling Needed
         self.erfe = v_bits(1)
-        
+
         #No SpecialHandling Needed
         self.erpe = v_bits(1)
-        
-        #will require special handling
+
+        #No SpecialHandling Needed
         self.m2 = v_bits(1)
-        
+
         #pad remains pad
         self._pad2 = v_const(8)
 
@@ -336,56 +336,56 @@ class ESCI_REGISTERS(PeripheralRegisterSet):
         super().__init__()
         self.brr = (ESCI_BRR_OFFSET, ESCI_x_BRR())
         self.cr1 = (ESCI_CR1_OFFSET, ESCI_x_CR1())
-        self.cr2 = (ESCI_CR2_OFFSET, ESCI_x_CR2()) 
-        self.cr3 = (ESCI_CR3_OFFSET, ESCI_x_CR3()) 
+        self.cr2 = (ESCI_CR2_OFFSET, ESCI_x_CR2())
+        self.cr3 = (ESCI_CR3_OFFSET, ESCI_x_CR3())
         self.ifsr1 = (ESCI_IFSR1_OFFSET, ESCI_x_IFSR1())
         self.ifsr2 = (ESCI_IFSR2_OFFSET, ESCI_x_IFSR2())
         self.lcr1 = (ESCI_LCR1_OFFSET, ESCI_x_LCR1())
-        self.lcr2 = (ESCI_LCR2_OFFSET, ESCI_x_LCR2()) 
-        self.lrr = (ESCI_LRR_OFFSET, ESCI_x_LRR())  
+        self.lcr2 = (ESCI_LCR2_OFFSET, ESCI_x_LCR2())
+        self.lrr = (ESCI_LRR_OFFSET, ESCI_x_LRR())
         self.lpr = (ESCI_LPR_OFFSET, ESCI_x_LPR())
 
 ESCI_INT_EVENTS = {
         'ESCI_A': {
-            'tie':      INTC_EVENT.ESCIA_IFSR1_TDRE,        
-            'tcie':     INTC_EVENT.ESCIA_IFSR1_TC,          
-            'rie':      INTC_EVENT.ESCIA_IFSR1_RDRF,        
+            'tie':      INTC_EVENT.ESCIA_IFSR1_TDRE,
+            'tcie':     INTC_EVENT.ESCIA_IFSR1_TC,
+            'rie':      INTC_EVENT.ESCIA_IFSR1_RDRF,
             'ilie':     INTC_EVENT.ESCIA_IFSR1_IDLE,
-            'orie':     INTC_EVENT.ESCIA_IFSR1_OR,          
-            'nfie':     INTC_EVENT.ESCIA_IFSR1_NF,          
-            'feie':     INTC_EVENT.ESCIA_IFSR1_FE,          
-            'pfie':     INTC_EVENT.ESCIA_IFSR1_PF,          
-            'berrie':    INTC_EVENT.ESCIA_IFSR1_BERR,        
-            #'rxie':     INTC_EVENT.ESCIA_IFSR2_RXRDY,       
-            #'txie':     INTC_EVENT.ESCIA_IFSR2_TXRDY,       
-            #'wuie':     INTC_EVENT.ESCIA_IFSR2_LWAKE,       
-            #'stie':     INTC_EVENT.ESCIA_IFSR2_STO,         
-            #'pbie':     INTC_EVENT.ESCIA_IFSR2_PBERR,       
-            #'cie':      INTC_EVENT.ESCIA_IFSR2_CERR,        
-            #'ckie':     INTC_EVENT.ESCIA_IFSR2_CKERR,       
-            #'fcie':     INTC_EVENT.ESCIA_IFSR2_FRC,         
-            #'ofie':     INTC_EVENT.ESCIA_IFSR2_OVFL,        
-            #'uqie':     INTC_EVENT.ESCIA_IFSR2_UREQ        
+            'orie':     INTC_EVENT.ESCIA_IFSR1_OR,
+            'nfie':     INTC_EVENT.ESCIA_IFSR1_NF,
+            'feie':     INTC_EVENT.ESCIA_IFSR1_FE,
+            'pfie':     INTC_EVENT.ESCIA_IFSR1_PF,
+            'berrie':    INTC_EVENT.ESCIA_IFSR1_BERR,
+            #'rxie':     INTC_EVENT.ESCIA_IFSR2_RXRDY,
+            #'txie':     INTC_EVENT.ESCIA_IFSR2_TXRDY,
+            #'wuie':     INTC_EVENT.ESCIA_IFSR2_LWAKE,
+            #'stie':     INTC_EVENT.ESCIA_IFSR2_STO,
+            #'pbie':     INTC_EVENT.ESCIA_IFSR2_PBERR,
+            #'cie':      INTC_EVENT.ESCIA_IFSR2_CERR,
+            #'ckie':     INTC_EVENT.ESCIA_IFSR2_CKERR,
+            #'fcie':     INTC_EVENT.ESCIA_IFSR2_FRC,
+            #'ofie':     INTC_EVENT.ESCIA_IFSR2_OVFL,
+            #'uqie':     INTC_EVENT.ESCIA_IFSR2_UREQ
         },
         'ESCI_B': {
             'tie':      INTC_EVENT.ESCIB_IFSR1_TDRE,
             'tcie':     INTC_EVENT.ESCIB_IFSR1_TC,
             'rie':      INTC_EVENT.ESCIB_IFSR1_RDRF,
             'ilie':     INTC_EVENT.ESCIB_IFSR1_IDLE,
-            'orie':     INTC_EVENT.ESCIB_IFSR1_OR,    
-            'nfie':     INTC_EVENT.ESCIB_IFSR1_NF,    
-            'feie':     INTC_EVENT.ESCIB_IFSR1_FE,    
-            'pfie':     INTC_EVENT.ESCIB_IFSR1_PF,    
-            'berrie':    INTC_EVENT.ESCIB_IFSR1_BERR,    
-            #'rxie':     INTC_EVENT.ESCIB_IFSR2_RXRDY,    
-            #'txie':     INTC_EVENT.ESCIB_IFSR2_TXRDY,    
-            #'wuie':     INTC_EVENT.ESCIB_IFSR2_LWAKE,    
-            #'stie':     INTC_EVENT.ESCIB_IFSR2_STO,    
-            #'pbie':     INTC_EVENT.ESCIB_IFSR2_PBERR,    
-            #'cie':      INTC_EVENT.ESCIB_IFSR2_CERR,    
-            #'ckie':     INTC_EVENT.ESCIB_IFSR2_CKERR,    
-            #'fcie':     INTC_EVENT.ESCIB_IFSR2_FRC,    
-            #'ofie':     INTC_EVENT.ESCIB_IFSR2_OVFL,    
+            'orie':     INTC_EVENT.ESCIB_IFSR1_OR,
+            'nfie':     INTC_EVENT.ESCIB_IFSR1_NF,
+            'feie':     INTC_EVENT.ESCIB_IFSR1_FE,
+            'pfie':     INTC_EVENT.ESCIB_IFSR1_PF,
+            'berrie':    INTC_EVENT.ESCIB_IFSR1_BERR,
+            #'rxie':     INTC_EVENT.ESCIB_IFSR2_RXRDY,
+            #'txie':     INTC_EVENT.ESCIB_IFSR2_TXRDY,
+            #'wuie':     INTC_EVENT.ESCIB_IFSR2_LWAKE,
+            #'stie':     INTC_EVENT.ESCIB_IFSR2_STO,
+            #'pbie':     INTC_EVENT.ESCIB_IFSR2_PBERR,
+            #'cie':      INTC_EVENT.ESCIB_IFSR2_CERR,
+            #'ckie':     INTC_EVENT.ESCIB_IFSR2_CKERR,
+            #'fcie':     INTC_EVENT.ESCIB_IFSR2_FRC,
+            #'ofie':     INTC_EVENT.ESCIB_IFSR2_OVFL,
             #'uqie':     INTC_EVENT.ESCIB_IFSR2_UREQ
         },
         'ESCI_C': {
@@ -393,20 +393,20 @@ ESCI_INT_EVENTS = {
             'tcie':     INTC_EVENT.ESCIC_IFSR1_TC,
             'rie':      INTC_EVENT.ESCIC_IFSR1_RDRF,
             'ilie':     INTC_EVENT.ESCIC_IFSR1_IDLE,
-            'orie':     INTC_EVENT.ESCIC_IFSR1_OR,    
-            'nfie':     INTC_EVENT.ESCIC_IFSR1_NF,    
-            'feie':     INTC_EVENT.ESCIC_IFSR1_FE,    
-            'pfie':     INTC_EVENT.ESCIC_IFSR1_PF,    
-            'berrie':    INTC_EVENT.ESCIC_IFSR1_BERR,    
-            #'rxie':     INTC_EVENT.ESCIC_IFSR2_RXRDY,    
-            #'txie':     INTC_EVENT.ESCIC_IFSR2_TXRDY,    
-            #'wuie':     INTC_EVENT.ESCIC_IFSR2_LWAKE,    
-            #'stie':     INTC_EVENT.ESCIC_IFSR2_STO,    
-            #'pbie':     INTC_EVENT.ESCIC_IFSR2_PBERR,    
-            #'cie':      INTC_EVENT.ESCIC_IFSR2_CERR,    
-            #'ckie':     INTC_EVENT.ESCIC_IFSR2_CKERR,    
-            #'fcie':     INTC_EVENT.ESCIC_IFSR2_FRC,    
-            #'ofie':     INTC_EVENT.ESCIC_IFSR2_OVFL,    
+            'orie':     INTC_EVENT.ESCIC_IFSR1_OR,
+            'nfie':     INTC_EVENT.ESCIC_IFSR1_NF,
+            'feie':     INTC_EVENT.ESCIC_IFSR1_FE,
+            'pfie':     INTC_EVENT.ESCIC_IFSR1_PF,
+            'berrie':    INTC_EVENT.ESCIC_IFSR1_BERR,
+            #'rxie':     INTC_EVENT.ESCIC_IFSR2_RXRDY,
+            #'txie':     INTC_EVENT.ESCIC_IFSR2_TXRDY,
+            #'wuie':     INTC_EVENT.ESCIC_IFSR2_LWAKE,
+            #'stie':     INTC_EVENT.ESCIC_IFSR2_STO,
+            #'pbie':     INTC_EVENT.ESCIC_IFSR2_PBERR,
+            #'cie':      INTC_EVENT.ESCIC_IFSR2_CERR,
+            #'ckie':     INTC_EVENT.ESCIC_IFSR2_CKERR,
+            #'fcie':     INTC_EVENT.ESCIC_IFSR2_FRC,
+            #'ofie':     INTC_EVENT.ESCIC_IFSR2_OVFL,
             #'uqie':     INTC_EVENT.ESCIC_IFSR2_UREQ
         }
 }
@@ -445,7 +445,7 @@ class LIN_SCI_MODE(enum.IntEnum):
 
 class eSCI(ExternalIOPeripheral):
     def __init__(self, devname, emu, mmio_addr):
-        super().__init__(emu, devname, mmio_addr, 0x4000, regsetcls=ESCI_REGISTERS, 
+        super().__init__(emu, devname, mmio_addr, 0x4000, regsetcls=ESCI_REGISTERS,
                 #isrstatus=('ifsr1','ifsr2'), isrflags=('cr1','cr2'), isrevents=ESCI_INT_EVENTS)
                 isrstatus='ifsr1', isrflags='cr1', isrevents=ESCI_INT_EVENTS)
 
@@ -459,37 +459,37 @@ class eSCI(ExternalIOPeripheral):
         self.registers.cr2.vsAddParseCallback('lres', self.linProtocolEngineReset)
         self.registers.cr2.vsAddParseCallback('lin', self.linModeControl)
 
-    def linModeControl(self, thing)
-        if self.registers.cr2.lin = 0:
+    def linModeControl(self, thing):
+        if self.registers.cr2.lin == 0:
             self.mode = LIN_SCI_MODE.SCI
-        if self.registers.cr2.lin = 1:
+        if self.registers.cr2.lin == 1:
             self.mode = LIN_SCI_MODE.LIN
 
-    def linProtocolEngineReset(self, thing)
-        if self.registers.cr2.lres = 0:
+    def linProtocolEngineReset(self, thing):
+        if self.registers.cr2.lres == 0:
             self.linProtoEnginer = LIN_PROTOCOL_ENGINE_RESET.OPERATIONAL
-        elif self.registers.cr2.lres = 1:
+        elif self.registers.cr2.lres == 1:
             self.linProtoEnginer = LIN_PROTOCOL_ENGINE_RESET.IDLE
 
     def parityBitMasking(self, thing):
-        if self.registers.cr2.pmsk = 0:
+        if self.registers.cr2.pmsk == 0:
             self.parityBitMask = PARITY_BIT_MASKING.DISABLE
-        elif self.registers.cr2.pmsk = 1:
+        elif self.registers.cr2.pmsk == 1:
             self.parityBitMask = PARITY_BIT_MASKING.ENABLE
 
     def moduleModeOfOperation(self, thing):
-        if self.registers.cr2.mdis = 0:
+        if self.registers.cr2.mdis == 0:
             self.moduleModeOfOperation = MODULE_MODE_OF_OPERATION.DISABLE
-        elif self.registers.cr2.mdis = 1:
+        elif self.registers.cr2.mdis == 1:
             self.moduleModeOfOperation = MODULE_MODE_OF_OPERATION.ENABLE
 
     def breakCharacterNotSupported(self, thing):
         raise NotImplementedError("Setting/Sending of break characters not implimented yet.")
 
     def setReceiverEnabled(self, thing):
-        if self.registers.cr1.re = 0:
+        if self.registers.cr1.re == 0:
             self.receiverEnable = RECEIVER_STATE.DISABLED
-        elif self.registers.cr1.re = 1:
+        elif self.registers.cr1.re == 1:
             self.receiverEnable = RECEIVER_STATE.ENABLED
 
     def wakeNotSupported(self, thing):
@@ -504,7 +504,7 @@ class eSCI(ExternalIOPeripheral):
             self.receiverSourceMode = RECEIVER_SOURCE_MODE.LOOP
         elif self.registers.cr1.loops == 0 and self.registers.cr1.rscr == 0:
             self.receiverSourceMode = RECEIVER_SOURCE_MODE.DUALWIRE
-            
+
     def reset(self, emu):
         super().reset(emu)
         self.brrShadowReg = 0
@@ -516,17 +516,17 @@ class eSCI(ExternalIOPeripheral):
         self.mode = 0
 
     def _setPeriphReg(self, offset, bytez):
-        
+
         if offset in ESCI_BRR_RANGE:
             if len(bytez) == 2:
-                self.registers.brr.sbr = e_bits.parsebytes(bytez, 0, 2, bigend=self.emu.getEndian()) 
+                self.registers.brr.sbr = e_bits.parsebytes(bytez, 0, 2, bigend=self.emu.getEndian())
                 self.brrShadowReg = 0
             elif offset == ESCI_BRR_OFFSET:
                 self.brrShadowReg = bytez[0]
             elif offset == ESCI_BRR_OFFSET + 1:
                 self.registers.brr.sbr = (self.brrShadowReg << 8) | bytez[0]
                 self.brrShadowReg = 0
-        
+
         #elif offsett in ESCI_REG2_RANGE:
         #   pass
         else:
