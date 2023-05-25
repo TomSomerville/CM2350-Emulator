@@ -526,7 +526,13 @@ class eSCI(ExternalIOPeripheral):
             elif offset == ESCI_BRR_OFFSET + 1:
                 self.registers.brr.sbr = (self.brrShadowReg << 8) | bytez[0]
                 self.brrShadowReg = 0
-
+        elif offset in ESCI_DR_RANGE:
+            #In LIN mode, all write access is ignored
+            pass
+        elif offset in ESCI_LTR_RANGE:
+            pass
+        elif offset in ESCI_LRR_RANGE:
+            pass
         #elif offsett in ESCI_REG2_RANGE:
         #   pass
         else:
@@ -534,7 +540,13 @@ class eSCI(ExternalIOPeripheral):
 
 
 
+    def _get_PeriphReg(self, offset, bytez):
 
+        if offset in ESCI_DR_RANGE:
+            #If LIN access is enabled return all 0's
+            pass
+        else:
+            super()._getPeriphReg(offset, bytez)
 
 
 
