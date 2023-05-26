@@ -528,6 +528,10 @@ class eSCI(ExternalIOPeripheral):
                 self.brrShadowReg = 0
         elif offset in ESCI_DR_RANGE:
             #In LIN mode, all write access is ignored
+            #not sur the rn bit field is important. We are not using parity bits, and RN contains the value o the parity bit msot of the time. 0 otherwise
+            #is TN set to 1 IF m2=0, m=1 and pe=0? or is TN observed. Can TN be set to 0 if m2=0,m=1,pe=0, and therefore still not transmitting most significant bit?
+            #ignoring err bit
+            
             pass
         elif offset in ESCI_LTR_RANGE:
             pass
@@ -540,7 +544,7 @@ class eSCI(ExternalIOPeripheral):
 
 
 
-    def _get_PeriphReg(self, offset, bytez):
+    def _getPeriphReg(self, offset, bytez):
 
         if offset in ESCI_DR_RANGE:
             #If LIN access is enabled return all 0's
