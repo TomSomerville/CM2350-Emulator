@@ -339,6 +339,7 @@ class ESCI_REGISTERS(PeripheralRegisterSet):
         self.cr2 = (ESCI_CR2_OFFSET, ESCI_x_CR2())
         self.cr3 = (ESCI_CR3_OFFSET, ESCI_x_CR3())
         self.ifsr1 = (ESCI_IFSR1_OFFSET, ESCI_x_IFSR1())
+        self.dr = (ESCI_DR_OFFSET, ESCI_x_DR())
         self.ifsr2 = (ESCI_IFSR2_OFFSET, ESCI_x_IFSR2())
         self.lcr1 = (ESCI_LCR1_OFFSET, ESCI_x_LCR1())
         self.lcr2 = (ESCI_LCR2_OFFSET, ESCI_x_LCR2())
@@ -458,6 +459,109 @@ class eSCI(ExternalIOPeripheral):
         self.registers.cr2.vsAddParseCallback('pmsk', self.parityBitMasking)
         self.registers.cr2.vsAddParseCallback('lres', self.linProtocolEngineReset)
         self.registers.cr2.vsAddParseCallback('lin', self.linModeControl)
+        self.registers.cr2.vsAddParseCallback('dr', self.drTX)
+
+    def drRX(self, value):
+        #value == an Int but cannot use int as a variable name
+        if self.registers.cr3.m2 == 0:
+	        if self.registers.cr1.m == 0:
+	            if self.registers.cr1.pe == 0:
+	                if self.registers.cr1.wake == 0:
+                        self.registers.dr.vsOverrideValue('rn', (value >> 15) 
+                        self.registers.dr.tn = value >> 14
+                        self.registers.dr.vsOverrideValue('err', (value >> 13) 
+                        self.registers.dr.vsOverrideValue('rd1', (value >> 8)) 
+                        self.registers.dr.rdtd1 = value >> 7 
+                        self.registers.dr.rdtd2 = value
+
+	                elif self.registers.cr1.wake == 1:
+                        self.registers.dr.vsOverrideValue('rn', <value>)
+                        self.registers.dr.tn =
+                        self.registers.dr.vsOverrideValue('err', <value>)  
+                        self.registers.dr.vsOverrideValue('rd1', <value>)
+                        self.registers.dr.rdtd1 =
+                        self.registers.dr.rdtd2 =
+
+	            elif self.registers.cr1.pe == 1:
+	                if self.registers.cr1.wake == 0:
+                        self.registers.dr.vsOverrideValue('rn', <value>)
+                        self.registers.dr.tn =
+                        self.registers.dr.vsOverrideValue('err', <value>)  
+                        self.registers.dr.vsOverrideValue('rd1', <value>)
+                        self.registers.dr.rdtd1 =
+                        self.registers.dr.rdtd2 =
+
+	        elif self.registers.cr1.m ==1:
+	            if self.registers.cr1.pe == 0:
+	                if self.registers.cr1.wake == 0:
+                        self.registers.dr.vsOverrideValue('rn', <value>)
+                        self.registers.dr.tn =
+                        self.registers.dr.vsOverrideValue('err', <value>)
+                        self.registers.dr.vsOverrideValue('rd1', <value>)
+                        self.registers.dr.rdtd1 =
+                        self.registers.dr.rdtd2 =
+
+	                elif self.registers.cr1.wake == 1:
+                        self.registers.dr.vsOverrideValue('rn', <value>)
+                        self.registers.dr.tn =
+                        self.registers.dr.vsOverrideValue('err', <value>)  
+                        self.registers.dr.vsOverrideValue('rd1', <value>)
+                        self.registers.dr.rdtd1 =
+                        self.registers.dr.rdtd2 =
+
+	            elif self.registers.cr1.pe == 1:
+	                if self.registers.cr1.wake == 0:
+                        self.registers.dr.vsOverrideValue('rn', <value>)
+                        self.registers.dr.tn =
+                        self.registers.dr.vsOverrideValue('err', <value>)  
+                        self.registers.dr.vsOverrideValue('rd1', <value>)
+                        self.registers.dr.rdtd1 =
+                        self.registers.dr.rdtd2 =
+
+		elif self.registers.cr3.m2 == 1:
+			if self.registers.cr1.m == 0:
+				elif self.registers.cr1.pe == 1:
+					if self.registers.cr1.wake == 0:
+                        self.registers.dr.vsOverrideValue('rn', <value>)
+                        self.registers.dr.tn =
+                        self.registers.dr.vsOverrideValue('err', <value>)  
+                        self.registers.dr.vsOverrideValue('rd1', <value>)
+                        self.registers.dr.rdtd1 =
+                        self.registers.dr.rdtd2 =
+
+			elif self.registers.cr1.m == 1:
+				elif self.registers.cr1.pe == 1:
+					if self.registers.cr1.wake == 0:
+                        self.registers.dr.vsOverrideValue('rn', <value>)
+                        self.registers.dr.tn =
+                        self.registers.dr.vsOverrideValue('err', <value>)  
+                        self.registers.dr.vsOverrideValue('rd1', <value>)
+                        self.registers.dr.rdtd1 =
+                        self.registers.dr.rdtd2 =
+
+    def drTX(self, thing):
+	if self.registers.cr3.m2 == 0:
+		if self.registers.cr1.m == 0: 
+			if self.registers.cr1.pe == 0:
+				if self.registers.cr1.wake == 0:
+					transmit((self.registers.dr.rdtd1 << 7) + self.registers.dr.rdtd2)
+				elif self.registers.cr1.wake == 1:
+					transmit((self.registers.dr.rdtd1 << 7) + self.registers.dr.rdtd2)
+	
+			elif self.registers.cr1.pe == 1:
+				if self.registers.cr1.wake == 0:
+					transmit(self.registers.dr.rdtd2)
+		
+		elif self.registers.cr1.m ==1:
+			if self.registers.cr1.pe == 0:
+				if self.registers.cr1.wake == 0:
+					transmit((self.registers.dr.tn << 8) + (self.registers.dr.rdtd1 << 7) + self.registers.dr.rdtd2)
+				elif self.registers.cr1.wake == 1:
+					transmit(self.registers.dr.tn << 8) + (self.registers.dr.rdtd1 << 7) + self.registers.dr.rdtd2)
+	
+			elif self.registers.cr1.pe == 1:
+				if self.registers.cr1.wake == 0:
+					transmit((self.registers.dr.rdtd1 << 7) + self.registers.dr.rdtd2)
 
     def linModeControl(self, thing):
         if self.registers.cr2.lin == 0:
@@ -514,6 +618,8 @@ class eSCI(ExternalIOPeripheral):
         self.parityBitMask = 0
         self.linProtoEngine = 0
         self.mode = 0
+        self.drMessageQueue = []
+        self.drRead = False
 
     def _setPeriphReg(self, offset, bytez):
 
@@ -526,33 +632,36 @@ class eSCI(ExternalIOPeripheral):
             elif offset == ESCI_BRR_OFFSET + 1:
                 self.registers.brr.sbr = (self.brrShadowReg << 8) | bytez[0]
                 self.brrShadowReg = 0
-        elif offset in ESCI_DR_RANGE:
-            #In LIN mode, all write access is ignored
-            #not sur the rn bit field is important. We are not using parity bits, and RN contains the value o the parity bit msot of the time. 0 otherwise
-            #is TN set to 1 IF m2=0, m=1 and pe=0? or is TN observed. Can TN be set to 0 if m2=0,m=1,pe=0, and therefore still not transmitting most significant bit?
-            #ignoring err bit
-            
-            pass
         elif offset in ESCI_LTR_RANGE:
             pass
         elif offset in ESCI_LRR_RANGE:
             pass
-        #elif offsett in ESCI_REG2_RANGE:
-        #   pass
         else:
             super()._setPeriphReg(offset, bytez)
 
 
 
-    def _getPeriphReg(self, offset, bytez):
+    def _getPeriphReg(self, offset, size):
 
         if offset in ESCI_DR_RANGE:
-            #If LIN access is enabled return all 0's
-            pass
+            if receiverEnable == RECEIVER_STATE.DISABLED or self.mode == LIN_SCI_MODE.LIN:
+                return b'\x00' * size
+            elif size == 2 or offset == 0x0007:
+                #if lower byte at offset 0x0007 is read, set read flag.
+                drRead = True
+            else:
+                super()._getPeriphReg(offset, size)
         else:
-            super()._getPeriphReg(offset, bytez)
+            super()._getPeriphReg(offset, size)
 
-
+    def processReceivedData(self, obj):
+        #clkear is read flag after data is set.
+        #message queue of messages to put into DR
+        #append to list call function
+        #function read indexlist[0] and sets data, sets read flag
+        self.drMessageQueue.append(obj)
+        if self.drRead == True:
+            drRX(obj)
 
 
 
