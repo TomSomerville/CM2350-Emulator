@@ -1,4 +1,7 @@
-#Copied Imports from dspi.py - please review
+#DR and LRR register needs to be double checked. LTR Register is all that remains?
+#processReceivedData determined which mode is currently active. appends the received data to the appropriet message queue. If the previous data has been read, indicated by self.drRead or self.lnRead, then it will call drRX() or linRX().
+#linRX/rdRX take the first item in their respected list, and assigned it to value. Then go through all possible scenarios though a nested if list to determine which frame format we are currently in. Then writes the register's bit fields with the correct data based on which frame format. lin is just plain ol write. After write, it pops the item off the list and sets the read value to false so it can read again.
+#please verify the bit field writes for the frame foramts in DR though.
 
 import enum
 
@@ -460,9 +463,21 @@ class eSCI(ExternalIOPeripheral):
         self.registers.cr2.vsAddParseCallback('lres', self.linProtocolEngineReset)
         self.registers.cr2.vsAddParseCallback('lin', self.linModeControl)
         self.registers.cr2.vsAddParseCallback('dr', self.drTX)
+        self.registers.cr2.vsAddParseCallback('ltr', self.drTX)
 
 
-    def drRX(self, value):
+    def linRX(self):
+        value = self.linRX[0]
+        self.registers.lrr.vsOverrideValue('d', value)
+
+
+    def linTX(self, thing):
+        #LTR Register
+        pass
+
+
+    def drRX(self):
+        value = self.drRX[0]
         #value == an Int but cannot use int as a variable name
         if self.registers.cr3.m2 == 0:
             if self.registers.cr1.m == 0:
@@ -540,7 +555,7 @@ class eSCI(ExternalIOPeripheral):
                         self.registers.dr.vsOverrideValue('rd1', (value >> 8))
                         self.registers.dr.rdtd1 = value >> 7
                         self.registers.dr.rdtd2 = value
-
+        self.drRX.pop(0)
         self.drRead = False
 
 
@@ -634,6 +649,8 @@ class eSCI(ExternalIOPeripheral):
         self.mode = 0
         self.drMessageQueue = []
         self.drRead = False
+        self.linMessageQueue = []
+        self.linRead = False
 
 
     def _setPeriphReg(self, offset, bytez):
@@ -646,10 +663,6 @@ class eSCI(ExternalIOPeripheral):
             elif offset == ESCI_BRR_OFFSET + 1:
                 self.registers.brr.sbr = (self.brrShadowReg << 8) | bytez[0]
                 self.brrShadowReg = 0
-        elif offset in ESCI_LTR_RANGE:
-            pass
-        elif offset in ESCI_LRR_RANGE:
-            pass
         else:
             super()._setPeriphReg(offset, bytez)
 
@@ -664,6 +677,14 @@ class eSCI(ExternalIOPeripheral):
                 drRead = True
             else:
                 super()._getPeriphReg(offset, size)
+        elif offset in ESCI_LRR_RANGE:
+            if receiverEnable == RECEIVER_STATE.DISABLED or self.mode == LIN_SCI_MODE.SCI:
+                return b'\x00' * size
+            elif size == 1:
+                linRead = True
+            else:
+                super()._getPeriphReg(offset, size)
+
         else:
             super()._getPeriphReg(offset, size)
 
@@ -673,7 +694,11 @@ class eSCI(ExternalIOPeripheral):
         #message queue of messages to put into DR
         #append to list call function
         #function read indexlist[0] and sets data, sets read flag
-        if self.mode == LIN_SCI_MODE.SCI
+        if self.mode == LIN_SCI_MODE.SCI:
             self.drMessageQueue.append(obj)
             if self.drRead == True:
                 drRX(obj)
+        elif self.mode == LIN_SCI_MODE.LIN:
+            self.linMessageQueue.append(obj)
+            if self.linRead == True:
+                linRX(obj)
